@@ -43,7 +43,7 @@ export function OptimizedImage({ src, alt, className, width, height }: Optimized
   };
 
   return (
-    <div ref={imgRef} className={`relative ${className}`} style={{ width, height }}>
+    <div ref={imgRef} className={`relative ${className}`}>
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-muted">
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />

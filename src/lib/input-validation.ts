@@ -26,7 +26,10 @@ export const commonSchemas = {
 /**
  * Validate request body against a schema
  */
-export function validateBody<T>(schema: z.ZodSchema<T>, data: unknown): {
+export function validateBody<T>(
+  schema: z.ZodSchema<T>,
+  data: unknown,
+): {
   success: boolean;
   data?: T;
   errors?: z.ZodError;
@@ -45,7 +48,10 @@ export function validateBody<T>(schema: z.ZodSchema<T>, data: unknown): {
 /**
  * Validate query parameters
  */
-export function validateQuery<T>(schema: z.ZodSchema<T>, params: URLSearchParams): {
+export function validateQuery<T>(
+  schema: z.ZodSchema<T>,
+  params: URLSearchParams,
+): {
   success: boolean;
   data?: T;
   errors?: z.ZodError;
@@ -102,7 +108,10 @@ export function containsSqlInjection(input: string): boolean {
 /**
  * Validate and sanitize request data
  */
-export function validateAndSanitize<T>(schema: z.ZodSchema<T>, data: unknown): {
+export function validateAndSanitize<T>(
+  schema: z.ZodSchema<T>,
+  data: unknown,
+): {
   success: boolean;
   data?: T;
   errors?: z.ZodError;
@@ -209,10 +218,13 @@ export function validateRequestBody<T>(schema: z.ZodSchema<T>) {
 /**
  * Validate file upload
  */
-export function validateFileUpload(file: File, options: {
-  maxSize?: number; // in bytes
-  allowedTypes?: string[];
-}): { valid: boolean; error?: string } {
+export function validateFileUpload(
+  file: File,
+  options: {
+    maxSize?: number; // in bytes
+    allowedTypes?: string[];
+  },
+): { valid: boolean; error?: string } {
   const { maxSize = 5 * 1024 * 1024, allowedTypes = [] } = options;
 
   if (file.size > maxSize) {
