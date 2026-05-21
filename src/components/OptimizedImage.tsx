@@ -58,8 +58,6 @@ export function OptimizedImage({ src, alt, className, width, height }: Optimized
           className={`w-full h-full object-cover transition-opacity duration-300 ${
             isLoading ? "opacity-0" : "opacity-100"
           }`}
-          width={width}
-          height={height}
         />
       )}
     </div>
