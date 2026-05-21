@@ -1,0 +1,310 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   SipCellar / DrinqInk Design System — Premium Modern Drinks Marketplace
+   Deep blacks, champagne gold, modern geometric typography, and lively glows
+   ============================================================ */
+
+@theme inline {
+  --font-display: "Outfit", "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-sans: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
+  --font-editorial: "Cormorant Garamond", "Times New Roman", serif;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-glow: var(--primary-glow);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-burgundy: var(--burgundy);
+  --color-charcoal: var(--charcoal);
+  --color-onyx: var(--onyx);
+  --color-cream: var(--cream);
+
+  /* Universal Drinks Categories Accents */
+  --color-beer: var(--beer);
+  --color-soda: var(--soda);
+  --color-water: var(--water);
+  --color-energy: var(--energy);
+  --color-cocktail: var(--cocktail);
+  --color-wine: var(--wine);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+}
+
+:root {
+  --radius: 0.5rem;
+
+  /* Core palette — deep blacks + champagne gold */
+  --background: oklch(0.12 0.005 60);            /* near-black with warm tint */
+  --foreground: oklch(0.96 0.012 80);            /* warm cream */
+  --card: oklch(0.16 0.008 60);                  /* charcoal */
+  --card-foreground: oklch(0.96 0.012 80);
+  --popover: oklch(0.16 0.008 60);
+  --popover-foreground: oklch(0.96 0.012 80);
+
+  --primary: oklch(0.78 0.13 85);                /* champagne gold */
+  --primary-foreground: oklch(0.12 0.005 60);
+  --primary-glow: oklch(0.86 0.14 88);
+
+  --secondary: oklch(0.22 0.01 60);
+  --secondary-foreground: oklch(0.96 0.012 80);
+
+  --muted: oklch(0.2 0.008 60);
+  --muted-foreground: oklch(0.65 0.015 70);
+
+  --accent: oklch(0.32 0.13 25);                 /* deep burgundy */
+  --accent-foreground: oklch(0.96 0.012 80);
+
+  --destructive: oklch(0.55 0.22 25);
+  --destructive-foreground: oklch(0.98 0 0);
+
+  --border: oklch(0.24 0.01 60);
+  --input: oklch(0.18 0.008 60);
+  --ring: oklch(0.78 0.13 85);
+
+  /* Named brand tokens */
+  --gold: oklch(0.78 0.13 85);
+  --gold-soft: oklch(0.86 0.08 85);
+  --burgundy: oklch(0.32 0.13 25);
+  --charcoal: oklch(0.16 0.008 60);
+  --onyx: oklch(0.09 0.004 60);
+  --cream: oklch(0.96 0.012 80);
+
+  /* Category Accents & Glows */
+  --beer: oklch(0.76 0.15 75);             /* Amber gold */
+  --soda: oklch(0.62 0.22 25);             /* Fizzy crimson */
+  --water: oklch(0.68 0.14 210);           /* Pure arctic blue */
+  --energy: oklch(0.65 0.25 140);          /* High-voltage green */
+  --cocktail: oklch(0.68 0.21 320);        /* Vibrant tropical pink */
+  --wine: oklch(0.45 0.18 20);             /* Royal burgundy */
+
+  /* Gradients */
+  --gradient-gold: linear-gradient(135deg, oklch(0.78 0.13 85) 0%, oklch(0.86 0.14 88) 100%);
+  --gradient-burgundy: linear-gradient(135deg, oklch(0.32 0.13 25) 0%, oklch(0.2 0.08 20) 100%);
+  --gradient-dark: linear-gradient(180deg, oklch(0.12 0.005 60) 0%, oklch(0.08 0.003 60) 100%);
+  --gradient-overlay: linear-gradient(180deg, transparent 0%, oklch(0.09 0.004 60 / 0.95) 100%);
+  --gradient-radial-gold: radial-gradient(ellipse at top, oklch(0.78 0.13 85 / 0.15), transparent 70%);
+
+  /* Shadows with gold tint */
+  --shadow-gold: 0 10px 40px -10px oklch(0.78 0.13 85 / 0.35);
+  --shadow-luxe: 0 20px 60px -20px oklch(0 0 0 / 0.6);
+  --shadow-card: 0 4px 24px -8px oklch(0 0 0 / 0.5);
+
+  /* Transitions */
+  --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+  --sidebar: oklch(0.14 0.006 60);
+  --sidebar-foreground: oklch(0.96 0.012 80);
+  --sidebar-primary: oklch(0.78 0.13 85);
+  --sidebar-primary-foreground: oklch(0.12 0.005 60);
+  --sidebar-accent: oklch(0.2 0.008 60);
+  --sidebar-accent-foreground: oklch(0.96 0.012 80);
+  --sidebar-border: oklch(0.24 0.01 60);
+  --sidebar-ring: oklch(0.78 0.13 85);
+
+  --chart-1: oklch(0.78 0.13 85);
+  --chart-2: oklch(0.32 0.13 25);
+  --chart-3: oklch(0.55 0.1 200);
+  --chart-4: oklch(0.65 0.15 145);
+  --chart-5: oklch(0.7 0.18 50);
+}
+
+/* Dark mode is the default — provide same values for .dark */
+.dark {
+  --background: oklch(0.12 0.005 60);
+  --foreground: oklch(0.96 0.012 80);
+  --card: oklch(0.16 0.008 60);
+  --card-foreground: oklch(0.96 0.012 80);
+  --popover: oklch(0.16 0.008 60);
+  --popover-foreground: oklch(0.96 0.012 80);
+  --primary: oklch(0.78 0.13 85);
+  --primary-foreground: oklch(0.12 0.005 60);
+  --secondary: oklch(0.22 0.01 60);
+  --secondary-foreground: oklch(0.96 0.012 80);
+  --muted: oklch(0.2 0.008 60);
+  --muted-foreground: oklch(0.65 0.015 70);
+  --accent: oklch(0.32 0.13 25);
+  --accent-foreground: oklch(0.96 0.012 80);
+  --destructive: oklch(0.55 0.22 25);
+  --border: oklch(0.24 0.01 60);
+  --input: oklch(0.18 0.008 60);
+  --ring: oklch(0.78 0.13 85);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    background-image: var(--gradient-radial-gold);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background-color: oklch(0.78 0.13 85 / 0.3);
+    color: oklch(0.96 0.012 80);
+  }
+}
+
+@layer components {
+  .text-gradient-gold {
+    background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .border-gold-gradient {
+    position: relative;
+    background:
+      linear-gradient(var(--card), var(--card)) padding-box,
+      var(--gradient-gold) border-box;
+    border: 1px solid transparent;
+  }
+
+  .glass-card {
+    background: oklch(0.16 0.008 60 / 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid oklch(0.78 0.13 85 / 0.15);
+  }
+
+  .luxe-shadow {
+    box-shadow: var(--shadow-luxe);
+  }
+
+  .gold-shadow {
+    box-shadow: var(--shadow-gold);
+  }
+
+  /* Category specific glowing hover cards */
+  .hover-glow-beer {
+    transition: var(--transition-smooth);
+  }
+  .hover-glow-beer:hover {
+    border-color: var(--beer) !important;
+    box-shadow: 0 10px 30px -10px oklch(0.76 0.15 75 / 0.45) !important;
+    transform: translateY(-2px);
+  }
+
+  .hover-glow-soda {
+    transition: var(--transition-smooth);
+  }
+  .hover-glow-soda:hover {
+    border-color: var(--soda) !important;
+    box-shadow: 0 10px 30px -10px oklch(0.62 0.22 25 / 0.45) !important;
+    transform: translateY(-2px);
+  }
+
+  .hover-glow-water {
+    transition: var(--transition-smooth);
+  }
+  .hover-glow-water:hover {
+    border-color: var(--water) !important;
+    box-shadow: 0 10px 30px -10px oklch(0.68 0.14 210 / 0.45) !important;
+    transform: translateY(-2px);
+  }
+
+  .hover-glow-energy {
+    transition: var(--transition-smooth);
+  }
+  .hover-glow-energy:hover {
+    border-color: var(--energy) !important;
+    box-shadow: 0 10px 30px -10px oklch(0.65 0.25 140 / 0.45) !important;
+    transform: translateY(-2px);
+  }
+
+  .hover-glow-cocktail {
+    transition: var(--transition-smooth);
+  }
+  .hover-glow-cocktail:hover {
+    border-color: var(--cocktail) !important;
+    box-shadow: 0 10px 30px -10px oklch(0.68 0.21 320 / 0.45) !important;
+    transform: translateY(-2px);
+  }
+
+  .hover-glow-wine {
+    transition: var(--transition-smooth);
+  }
+  .hover-glow-wine:hover {
+    border-color: var(--wine) !important;
+    box-shadow: 0 10px 30px -10px oklch(0.45 0.18 20 / 0.45) !important;
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up { animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-float { animation: float 6s ease-in-out infinite; }
