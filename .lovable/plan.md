@@ -1,99 +1,84 @@
-# SipCellar — Drinks Marketplace Build Plan
+# Why you can't see your local changes
 
-A reality check first: this vision is ~30 pages, 20+ DB tables, payments, AI, real-time tracking, group ordering, admin panel. **One chat turn cannot ship all of it without breaking.** I'll build it in 4 milestones, each a separate turn so we can test before moving on. Approve this plan and we start Milestone 1 immediately.
+I checked your repo against the live database and the wiring:
 
----
+- **Big migration file is sitting unapplied.** `supabase/migrations/20260521_add_missing_features.sql` (649 lines) creates ~25 new tables — `group_orders`, `event_plans`, `loyalty_tiers/transactions/rewards`, `subscriptions`, `favorites`, `notification_preferences`, `dispute_comments`, `order_item_customizations`, `corporate_team_members`, `vendor_analytics`, etc. None of them exist in the live DB yet. Any component that queries them silently fails → you see nothing.
+- **Several new components are orphaned.** `GroupOrders`, `EventPlanner`, `TheCellar`, `BlogCMS`, `CorporateTeamManagement`, `DisputeComments`, `OrderCustomizationDialog`, `OrderTracking`, `PaymentSplitting`, `ProductReviews`, `RefundRequest`, `SearchFilters`, `NotificationPreferences`, `AddressValidation` exist on disk but nothing imports them. They literally can't render until wired into routes.
+- **Only 5 of the new components are imported anywhere**: `LoyaltyPoints` + `SubscriptionManager` (dashboard), `FavoriteButton` (flash-deals, product, vendor).
 
-## Design system (applied throughout)
-
-- **Vibe:** Premium dark bottle-shop. Deep blacks, champagne gold accents, editorial serif display + clean sans body.
-- **Tokens (in `src/styles.css`):** `--background` near-black, `--primary` champagne gold, `--accent` deep burgundy, `--card` charcoal. All oklch.
-- **Fonts:** Cormorant Garamond (display) + Inter (body).
-- **Components:** Custom Button variants (`hero`, `gold`, `ghost-gold`), custom Card with subtle gold border-gradient.
+So the fix is two parts: get the DB matching the code, then mount the components on real routes. Then the cinematic layer on top.
 
 ---
 
-## Milestone 1 — Foundation, schema, auth, design system
+## Milestone A — Restore the foundation (so changes actually appear)
 
-**Database (full schema, all 20+ tables in one migration):**
-- `profiles` (linked to auth.users), `user_roles` + `app_role` enum (`customer`, `vendor`, `admin`) with `has_role()` security-definer function
-- `corporate_accounts`, `vendors`, `categories`, `products`, `packages`, `bundles`
-- `orders`, `order_items`, `bookings`, `vendor_slots`
-- `reviews`, `payouts`, `disputes`, `referrals`, `loyalty_points`, `flash_deals`, `notifications`, `waitlists`, `addresses`
-- RLS on every table. Storage buckets: `vendor-logos`, `product-images`, `proof-of-delivery`.
-- Trigger to auto-create profile + assign `customer` role on signup.
+1. **Apply the missing-features migration** via `supabase--migration` (re-issue the 649-line file as one transaction). Includes: new enums, group orders, event planner tables, loyalty system + tiers seed, referral bonuses, subscriptions, vendor/product analytics, dispute comments, order customizations, notification channels/preferences/log, favorites, corporate team/approvals/budgets/activity tables, RLS on every new table, indexes, triggers.
+2. **Regenerate `src/integrations/supabase/types.ts`** so the new tables are typed (otherwise TS will reject every new query).
+3. **Smoke-test the live preview** route-by-route via the browser tool and read console + network for 4xx/5xx; fix any RLS or column mismatch found.
 
-**Auth & routing:**
-- `/login`, `/signup` (email/password + Google)
-- `_authenticated` layout guard; role-based subtree guards
-- Public routes: landing, browse, vendor profile, product detail, search, categories, flash deals, the cellar, blog, contact, FAQ, about, how-it-works (×2)
-- Premium landing page with hero, category showcase, featured vendors, testimonials, footer
+## Milestone B — Wire the orphan components into real routes
 
-**Deliverable:** Anyone can sign up, browse the landing page, and the full DB is ready for everything that comes next.
+Mount each existing component where it belongs. No new components built here, just plumbing + small route shells:
 
----
+| Component | Destination |
+|---|---|
+| `GroupOrders` | new `/_authenticated/group-orders` route + entry on dashboard |
+| `EventPlanner` | new `/_authenticated/event-planner` route |
+| `SubscriptionManager` | already on dashboard — verify it works post-migration |
+| `LoyaltyPoints` | already on dashboard — verify tier data shows |
+| `NotificationPreferences` | new `/_authenticated/notifications` route |
+| `OrderTracking` | embed inside `_authenticated/orders.$id.tsx` |
+| `ProductReviews` | embed in `product.$id.tsx` |
+| `OrderCustomizationDialog` | trigger from product detail "Customize" CTA |
+| `RefundRequest` + `DisputeComments` | embed in order detail when status allows |
+| `PaymentSplitting` | option in checkout for group orders |
+| `SearchFilters` | embed in `/browse` and `/search` |
+| `AddressValidation` | embed in checkout + addresses form |
+| `CorporateTeamManagement` | new `/_authenticated/corporate` route |
+| `BlogCMS` | new `/_authenticated/admin/blog` route (admin-only) |
+| `TheCellar` | replace static `/cellar` content or embed below hero |
 
-## Milestone 2 — Customer ordering loop + Paystack
+Add the new routes to the header/dashboard nav so users can reach them.
 
-- Vendor profile page, product detail page, browse + search + filters
-- Cart (Zustand), checkout flow, saved addresses
-- **Paystack split payments** via server function (requires `PAYSTACK_SECRET_KEY` — I'll request when we get here)
-- Order confirmation, customer dashboard, order tracking with status timeline, order history, reorder
-- Reviews (SipScore: 5 sub-scores)
-- Resend transactional emails (requires `RESEND_API_KEY`)
+## Milestone C — Cinematic 3D drinks journey (your /skill-creation brief)
 
----
+Layer the immersive experience on top of the now-working app. Built incrementally so we don't regress functionality.
 
-## Milestone 3 — Vendor side + Admin panel
+**Foundation:**
+- Install `framer-motion` (have), `gsap`, `@studio-freight/lenis`, `@react-three/fiber`, `@react-three/drei`, `three`, `@tsparticles/react`.
+- Global `LenisProvider` in `__root.tsx` for smooth scroll.
+- GSAP + ScrollTrigger registration helper.
 
-- Vendor onboarding multi-step form → admin approval queue
-- Vendor dashboard: catalogue manager, bulk CSV upload, order management, booking calendar, availability slots, analytics, payout tracker, flash deal creator, package/bundle builder, reviews received
-- Admin panel at `/x-control`: vendor approve/suspend/feature, dispute resolution, payouts, commission settings, GMV dashboard, announcements broadcaster, audit log
+**Home page (`/`) cinematic rebuild:**
+- Hero: keep premium image/video bg, layered glass nav, ambient floating particles, parallax headline.
+- Section 2 onward: `<Canvas>` with a single hero **3D bottle** that travels with scroll. Use ScrollTrigger to swap GLB/material as user scrolls through categories: Wine → Champagne → Whiskey → Cola → Water → Energy → Juice → Cocktail.
+- Each section is its own "environment": background gradient, lighting rig, particle palette, label all animated. Liquid/dissolve transitions between bottles via shader (custom OGL/Three material with noise dissolve + chromatic blend).
+- Pinned scroll scenes for category storytelling; cursor-reactive bottle rotation.
+- Mobile: degrade to a smaller bottle + reduced particle count; preserve scroll storytelling.
 
----
+**Cross-site polish:**
+- Lenis smooth scroll site-wide.
+- Replace harsh page transitions with crossfade + slide (framer-motion `AnimatePresence` at route level).
+- Premium hover/tap micro-interactions on cards, buttons, nav.
+- Ambient floating motion on category cards, vendor cards, cellar hero.
+- Glassmorphism pass on header, drawers, dialogs.
 
-## Milestone 4 — Differentiators + polish
+**Performance guardrails:**
+- Lazy-load `@react-three/fiber` scene with Suspense; only mount when in viewport.
+- `useReducedMotion` respected — fall back to static hero for users who opted out.
+- Compressed `.glb` bottles (Draco) ≤ 300KB each; share one geometry + swap materials/labels.
+- FPS budget: target 60 desktop / 30+ mobile; visible perf monitor in dev only.
 
-- **DrinkBoard AI event planner** (Lovable AI Gateway — already have `LOVABLE_API_KEY`)
-- Group order pooling with share links
-- Pre-built event packages, custom bundles, budget calculator
-- Loyalty points + redemption, referral program, waitlists, favourites, wishlists
-- Subscription packs (recurring orders)
-- Corporate accounts (team profiles, spending limits, approval workflows)
-- PWA setup (installable, offline shell, web push notifications)
-- Google Maps integration for coverage zones (requires `GOOGLE_MAPS_API_KEY`)
-- Termii SMS (requires `TERMII_API_KEY`)
-- PostHog analytics (requires `POSTHOG_API_KEY`)
-- SEO: sitemap.xml, robots.txt, per-route meta, JSON-LD for products/vendors
+## Risks / what I'll need from you
 
----
+- The migration is large. If anything in it conflicts with manual DB edits you made outside of Lovable, I'll need to reconcile — I'll surface conflicts before forcing through.
+- 3D bottle GLB assets: I can either generate stylized stand-ins, or you upload the real bottle models. Stand-ins keep us moving; real assets land at the polish pass.
+- Some flows (Paystack split, Resend emails) still need `PAYSTACK_SECRET_KEY` / `RESEND_API_KEY` to truly work end-to-end. I'll mock-pass where keys are missing and call them out.
 
-## API keys you'll need to add (when we reach each milestone)
+## Order of work when you approve
 
-| Milestone | Secret | Where to get it |
-|---|---|---|
-| 2 | `PAYSTACK_SECRET_KEY`, `PAYSTACK_PUBLIC_KEY` | paystack.com → Settings → API Keys |
-| 2 | `RESEND_API_KEY` | resend.com → API Keys |
-| 4 | `GOOGLE_MAPS_API_KEY` | Google Cloud Console |
-| 4 | `TERMII_API_KEY` | termii.com dashboard |
-| 4 | `POSTHOG_API_KEY` | posthog.com project settings |
-
-`LOVABLE_API_KEY` is already set (for DrinkBoard AI).
-
----
-
-## Tech notes (skip if non-technical)
-
-- TanStack Start file-based routing under `src/routes/`. Each public section = own route file (SEO).
-- Server logic = `createServerFn` (NOT Supabase Edge Functions). Paystack init/verify, AI calls, admin actions all live there.
-- Roles in dedicated `user_roles` table with `has_role()` security-definer function (prevents privilege-escalation; never store role on `profiles`).
-- React Query for server state, Zustand for cart/UI state, React Hook Form + Zod for forms.
-- Real-time order tracking via Supabase Realtime channels on `orders` table.
-
----
-
-## What I need from you to start
-
-Just approve this plan. I'll begin Milestone 1 (schema + auth + design system + landing + all public route shells) in the next turn. We test it works, then move to M2.
-
-Heads up: each milestone is a substantial build. Expect to spend several chat turns per milestone iterating on bugs, copy, and design tweaks. That's normal for a project of this size — and far safer than trying to ship everything at once.
+1. Migration + types regen (Milestone A).
+2. Browser-test every flow, fix what breaks.
+3. Wire orphan components (Milestone B), test again.
+4. Install 3D stack + Lenis, ship cinematic home page (Milestone C – pass 1).
+5. Cross-site motion polish (Milestone C – pass 2).
