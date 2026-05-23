@@ -30,9 +30,12 @@ import { Route as VendorSlugRouteImport } from './routes/vendor.$slug'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
 import { Route as AuthenticatedVendorOnboardingRouteImport } from './routes/_authenticated/vendor-onboarding'
+import { Route as AuthenticatedVendorDashboardRouteImport } from './routes/_authenticated/vendor-dashboard'
 import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
+import { Route as AuthenticatedFavoritesRouteImport } from './routes/_authenticated/favorites'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAddressesRouteImport } from './routes/_authenticated/addresses'
 import { Route as AuthenticatedOrdersIdRouteImport } from './routes/_authenticated/orders.$id'
 
@@ -141,9 +144,20 @@ const AuthenticatedVendorOnboardingRoute =
     path: '/vendor-onboarding',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedVendorDashboardRoute =
+  AuthenticatedVendorDashboardRouteImport.update({
+    id: '/vendor-dashboard',
+    path: '/vendor-dashboard',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
   id: '/orders',
   path: '/orders',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedFavoritesRoute = AuthenticatedFavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -154,6 +168,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 const AuthenticatedCheckoutRoute = AuthenticatedCheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedAddressesRoute = AuthenticatedAddressesRouteImport.update({
@@ -185,9 +204,12 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/addresses': typeof AuthenticatedAddressesRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/favorites': typeof AuthenticatedFavoritesRoute
   '/orders': typeof AuthenticatedOrdersRouteWithChildren
+  '/vendor-dashboard': typeof AuthenticatedVendorDashboardRoute
   '/vendor-onboarding': typeof AuthenticatedVendorOnboardingRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/product/$id': typeof ProductIdRoute
@@ -212,9 +234,12 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/addresses': typeof AuthenticatedAddressesRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/favorites': typeof AuthenticatedFavoritesRoute
   '/orders': typeof AuthenticatedOrdersRouteWithChildren
+  '/vendor-dashboard': typeof AuthenticatedVendorDashboardRoute
   '/vendor-onboarding': typeof AuthenticatedVendorOnboardingRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/product/$id': typeof ProductIdRoute
@@ -241,9 +266,12 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/_authenticated/addresses': typeof AuthenticatedAddressesRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/favorites': typeof AuthenticatedFavoritesRoute
   '/_authenticated/orders': typeof AuthenticatedOrdersRouteWithChildren
+  '/_authenticated/vendor-dashboard': typeof AuthenticatedVendorDashboardRoute
   '/_authenticated/vendor-onboarding': typeof AuthenticatedVendorOnboardingRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/product/$id': typeof ProductIdRoute
@@ -270,9 +298,12 @@ export interface FileRouteTypes {
     | '/search'
     | '/signup'
     | '/addresses'
+    | '/admin'
     | '/checkout'
     | '/dashboard'
+    | '/favorites'
     | '/orders'
+    | '/vendor-dashboard'
     | '/vendor-onboarding'
     | '/categories/$slug'
     | '/product/$id'
@@ -297,9 +328,12 @@ export interface FileRouteTypes {
     | '/search'
     | '/signup'
     | '/addresses'
+    | '/admin'
     | '/checkout'
     | '/dashboard'
+    | '/favorites'
     | '/orders'
+    | '/vendor-dashboard'
     | '/vendor-onboarding'
     | '/categories/$slug'
     | '/product/$id'
@@ -325,9 +359,12 @@ export interface FileRouteTypes {
     | '/search'
     | '/signup'
     | '/_authenticated/addresses'
+    | '/_authenticated/admin'
     | '/_authenticated/checkout'
     | '/_authenticated/dashboard'
+    | '/_authenticated/favorites'
     | '/_authenticated/orders'
+    | '/_authenticated/vendor-dashboard'
     | '/_authenticated/vendor-onboarding'
     | '/categories/$slug'
     | '/product/$id'
@@ -506,11 +543,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedVendorOnboardingRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/vendor-dashboard': {
+      id: '/_authenticated/vendor-dashboard'
+      path: '/vendor-dashboard'
+      fullPath: '/vendor-dashboard'
+      preLoaderRoute: typeof AuthenticatedVendorDashboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/orders': {
       id: '/_authenticated/orders'
       path: '/orders'
       fullPath: '/orders'
       preLoaderRoute: typeof AuthenticatedOrdersRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/favorites': {
+      id: '/_authenticated/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof AuthenticatedFavoritesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard': {
@@ -525,6 +576,13 @@ declare module '@tanstack/react-router' {
       path: '/checkout'
       fullPath: '/checkout'
       preLoaderRoute: typeof AuthenticatedCheckoutRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/addresses': {
@@ -557,17 +615,23 @@ const AuthenticatedOrdersRouteWithChildren =
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAddressesRoute: typeof AuthenticatedAddressesRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedFavoritesRoute: typeof AuthenticatedFavoritesRoute
   AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRouteWithChildren
+  AuthenticatedVendorDashboardRoute: typeof AuthenticatedVendorDashboardRoute
   AuthenticatedVendorOnboardingRoute: typeof AuthenticatedVendorOnboardingRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAddressesRoute: AuthenticatedAddressesRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedFavoritesRoute: AuthenticatedFavoritesRoute,
   AuthenticatedOrdersRoute: AuthenticatedOrdersRouteWithChildren,
+  AuthenticatedVendorDashboardRoute: AuthenticatedVendorDashboardRoute,
   AuthenticatedVendorOnboardingRoute: AuthenticatedVendorOnboardingRoute,
 }
 
@@ -611,3 +675,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
