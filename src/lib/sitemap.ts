@@ -14,7 +14,7 @@ export async function generateSitemap() {
   // Fetch dynamic content
   const [products, vendors, blogPosts] = await Promise.all([
     supabase.from("products").select("slug, updated_at").eq("is_active", true),
-    supabase.from("vendors").select("slug, updated_at").eq("is_active", true),
+    supabase.from("vendors").select("slug, updated_at").eq("status", "approved"),
     supabase.from("blog_posts").select("slug, updated_at").eq("status", "published"),
   ]);
 
