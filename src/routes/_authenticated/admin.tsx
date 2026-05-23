@@ -37,7 +37,7 @@ function AdminDashboard() {
 
   const checkAdminAccess = async () => {
     if (!user) return;
-    const { data } = await supabase.rpc("has_role", { user_id: user.id, role_name: "admin" });
+    const { data } = await supabase.rpc("has_role", { _user_id: user.id, _role: "admin" });
     setIsAdmin(data || false);
   };
 

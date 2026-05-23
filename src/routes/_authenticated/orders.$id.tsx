@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/stores/cart";
 import { toast } from "sonner";
+import { OrderTracking } from "@/components/OrderTracking";
+import { RefundRequest } from "@/components/RefundRequest";
 
 export const Route = createFileRoute("/_authenticated/orders/$id")({
   head: () => ({ meta: [{ title: "Order — SipCellar" }] }),
@@ -155,6 +157,8 @@ function OrderDetailPage() {
                 </section>
               )}
 
+              <OrderTracking orderId={order.id} />
+
               {isDelivered && !existingReview && (
                 <ReviewForm orderId={order.id} vendorId={order.vendor_id} onDone={() => setExistingReview(true)} />
               )}
@@ -163,6 +167,8 @@ function OrderDetailPage() {
                   ★ You've reviewed this order. Thanks!
                 </div>
               )}
+
+              <RefundRequest orderId={order.id} />
             </div>
 
             <aside>

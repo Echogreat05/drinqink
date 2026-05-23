@@ -32,12 +32,16 @@ import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
 import { Route as AuthenticatedVendorOnboardingRouteImport } from './routes/_authenticated/vendor-onboarding'
 import { Route as AuthenticatedVendorDashboardRouteImport } from './routes/_authenticated/vendor-dashboard'
 import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
+import { Route as AuthenticatedGroupOrdersRouteImport } from './routes/_authenticated/group-orders'
 import { Route as AuthenticatedFavoritesRouteImport } from './routes/_authenticated/favorites'
+import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated/events'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedCorporateRouteImport } from './routes/_authenticated/corporate'
 import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAddressesRouteImport } from './routes/_authenticated/addresses'
 import { Route as AuthenticatedOrdersIdRouteImport } from './routes/_authenticated/orders.$id'
+import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin.blog'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -155,14 +159,30 @@ const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
   path: '/orders',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedGroupOrdersRoute =
+  AuthenticatedGroupOrdersRouteImport.update({
+    id: '/group-orders',
+    path: '/group-orders',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedFavoritesRoute = AuthenticatedFavoritesRouteImport.update({
   id: '/favorites',
   path: '/favorites',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedEventsRoute = AuthenticatedEventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedCorporateRoute = AuthenticatedCorporateRouteImport.update({
+  id: '/corporate',
+  path: '/corporate',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedCheckoutRoute = AuthenticatedCheckoutRouteImport.update({
@@ -185,6 +205,11 @@ const AuthenticatedOrdersIdRoute = AuthenticatedOrdersIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AuthenticatedOrdersRoute,
 } as any)
+const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -204,16 +229,20 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/addresses': typeof AuthenticatedAddressesRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/checkout': typeof AuthenticatedCheckoutRoute
+  '/corporate': typeof AuthenticatedCorporateRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/events': typeof AuthenticatedEventsRoute
   '/favorites': typeof AuthenticatedFavoritesRoute
+  '/group-orders': typeof AuthenticatedGroupOrdersRoute
   '/orders': typeof AuthenticatedOrdersRouteWithChildren
   '/vendor-dashboard': typeof AuthenticatedVendorDashboardRoute
   '/vendor-onboarding': typeof AuthenticatedVendorOnboardingRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/product/$id': typeof ProductIdRoute
   '/vendor/$slug': typeof VendorSlugRoute
+  '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/orders/$id': typeof AuthenticatedOrdersIdRoute
 }
 export interface FileRoutesByTo {
@@ -234,16 +263,20 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/addresses': typeof AuthenticatedAddressesRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/checkout': typeof AuthenticatedCheckoutRoute
+  '/corporate': typeof AuthenticatedCorporateRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/events': typeof AuthenticatedEventsRoute
   '/favorites': typeof AuthenticatedFavoritesRoute
+  '/group-orders': typeof AuthenticatedGroupOrdersRoute
   '/orders': typeof AuthenticatedOrdersRouteWithChildren
   '/vendor-dashboard': typeof AuthenticatedVendorDashboardRoute
   '/vendor-onboarding': typeof AuthenticatedVendorOnboardingRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/product/$id': typeof ProductIdRoute
   '/vendor/$slug': typeof VendorSlugRoute
+  '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/orders/$id': typeof AuthenticatedOrdersIdRoute
 }
 export interface FileRoutesById {
@@ -266,16 +299,20 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/_authenticated/addresses': typeof AuthenticatedAddressesRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
+  '/_authenticated/corporate': typeof AuthenticatedCorporateRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/events': typeof AuthenticatedEventsRoute
   '/_authenticated/favorites': typeof AuthenticatedFavoritesRoute
+  '/_authenticated/group-orders': typeof AuthenticatedGroupOrdersRoute
   '/_authenticated/orders': typeof AuthenticatedOrdersRouteWithChildren
   '/_authenticated/vendor-dashboard': typeof AuthenticatedVendorDashboardRoute
   '/_authenticated/vendor-onboarding': typeof AuthenticatedVendorOnboardingRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/product/$id': typeof ProductIdRoute
   '/vendor/$slug': typeof VendorSlugRoute
+  '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/_authenticated/orders/$id': typeof AuthenticatedOrdersIdRoute
 }
 export interface FileRouteTypes {
@@ -300,14 +337,18 @@ export interface FileRouteTypes {
     | '/addresses'
     | '/admin'
     | '/checkout'
+    | '/corporate'
     | '/dashboard'
+    | '/events'
     | '/favorites'
+    | '/group-orders'
     | '/orders'
     | '/vendor-dashboard'
     | '/vendor-onboarding'
     | '/categories/$slug'
     | '/product/$id'
     | '/vendor/$slug'
+    | '/admin/blog'
     | '/orders/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -330,14 +371,18 @@ export interface FileRouteTypes {
     | '/addresses'
     | '/admin'
     | '/checkout'
+    | '/corporate'
     | '/dashboard'
+    | '/events'
     | '/favorites'
+    | '/group-orders'
     | '/orders'
     | '/vendor-dashboard'
     | '/vendor-onboarding'
     | '/categories/$slug'
     | '/product/$id'
     | '/vendor/$slug'
+    | '/admin/blog'
     | '/orders/$id'
   id:
     | '__root__'
@@ -361,14 +406,18 @@ export interface FileRouteTypes {
     | '/_authenticated/addresses'
     | '/_authenticated/admin'
     | '/_authenticated/checkout'
+    | '/_authenticated/corporate'
     | '/_authenticated/dashboard'
+    | '/_authenticated/events'
     | '/_authenticated/favorites'
+    | '/_authenticated/group-orders'
     | '/_authenticated/orders'
     | '/_authenticated/vendor-dashboard'
     | '/_authenticated/vendor-onboarding'
     | '/categories/$slug'
     | '/product/$id'
     | '/vendor/$slug'
+    | '/_authenticated/admin/blog'
     | '/_authenticated/orders/$id'
   fileRoutesById: FileRoutesById
 }
@@ -557,6 +606,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrdersRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/group-orders': {
+      id: '/_authenticated/group-orders'
+      path: '/group-orders'
+      fullPath: '/group-orders'
+      preLoaderRoute: typeof AuthenticatedGroupOrdersRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/favorites': {
       id: '/_authenticated/favorites'
       path: '/favorites'
@@ -564,11 +620,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFavoritesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/events': {
+      id: '/_authenticated/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof AuthenticatedEventsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/corporate': {
+      id: '/_authenticated/corporate'
+      path: '/corporate'
+      fullPath: '/corporate'
+      preLoaderRoute: typeof AuthenticatedCorporateRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/checkout': {
@@ -599,8 +669,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrdersIdRouteImport
       parentRoute: typeof AuthenticatedOrdersRoute
     }
+    '/_authenticated/admin/blog': {
+      id: '/_authenticated/admin/blog'
+      path: '/blog'
+      fullPath: '/admin/blog'
+      preLoaderRoute: typeof AuthenticatedAdminBlogRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
+
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
 interface AuthenticatedOrdersRouteChildren {
   AuthenticatedOrdersIdRoute: typeof AuthenticatedOrdersIdRoute
@@ -615,10 +703,13 @@ const AuthenticatedOrdersRouteWithChildren =
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAddressesRoute: typeof AuthenticatedAddressesRoute
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
+  AuthenticatedCorporateRoute: typeof AuthenticatedCorporateRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedEventsRoute: typeof AuthenticatedEventsRoute
   AuthenticatedFavoritesRoute: typeof AuthenticatedFavoritesRoute
+  AuthenticatedGroupOrdersRoute: typeof AuthenticatedGroupOrdersRoute
   AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRouteWithChildren
   AuthenticatedVendorDashboardRoute: typeof AuthenticatedVendorDashboardRoute
   AuthenticatedVendorOnboardingRoute: typeof AuthenticatedVendorOnboardingRoute
@@ -626,10 +717,13 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAddressesRoute: AuthenticatedAddressesRoute,
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
+  AuthenticatedCorporateRoute: AuthenticatedCorporateRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedEventsRoute: AuthenticatedEventsRoute,
   AuthenticatedFavoritesRoute: AuthenticatedFavoritesRoute,
+  AuthenticatedGroupOrdersRoute: AuthenticatedGroupOrdersRoute,
   AuthenticatedOrdersRoute: AuthenticatedOrdersRouteWithChildren,
   AuthenticatedVendorDashboardRoute: AuthenticatedVendorDashboardRoute,
   AuthenticatedVendorOnboardingRoute: AuthenticatedVendorOnboardingRoute,
