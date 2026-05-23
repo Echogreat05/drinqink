@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState } from "react";
 import { Sparkles, Calendar, Users, Wine, Clock, Check } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

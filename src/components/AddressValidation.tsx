@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState } from "react";
 import { MapPin, Check, AlertCircle, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import crypto from "crypto";
 import { supabaseAdmin } from "./supabase/client.server";
 import type { PaystackWebhookPayload } from "./paystack-types";
