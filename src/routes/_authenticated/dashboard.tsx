@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LogOut, ShoppingBag, Store, Shield, Wine, Sparkles, MapPin, Award, Share2, CreditCard, Bell } from "lucide-react";
+import { LogOut, ShoppingBag, Store, Shield, Wine, Sparkles, MapPin, Award, Share2, CreditCard, Bell, Users, Calendar, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
@@ -68,6 +68,9 @@ function DashboardPage() {
             <DashCard to="/cellar" icon={Sparkles} title="The Cellar" body="Rare and curated premium selections." />
             <DashCard to="/orders" icon={ShoppingBag} title="My orders" body="Track active orders and view history." />
             <DashCard to="/addresses" icon={MapPin} title="Addresses" body="Manage your saved delivery addresses." />
+            <DashCard to="/group-orders" icon={Users} title="Group orders" body="Pool an order with friends and split the bill." />
+            <DashCard to="/events" icon={Calendar} title="Event planner" body="Curated drink suggestions for your event." />
+            <DashCard to="/corporate" icon={Building2} title="Corporate" body="Manage your company account and team." />
 
             {isVendor ? (
               <DashCard to="/vendor-dashboard" icon={Store} title="Vendor dashboard" body="Manage catalogue, orders and payouts." accent />
