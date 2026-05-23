@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/integrations/supabase/auth-middleware";
+import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
 export function SubscriptionManager() {

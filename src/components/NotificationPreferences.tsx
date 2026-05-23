@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/integrations/supabase/auth-middleware";
+import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
 export function NotificationPreferences() {

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { TrendingUp, TrendingDown, DollarSign, Package, Users, ShoppingCart } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/integrations/supabase/auth-middleware";
+import { useAuth } from "@/hooks/use-auth";
 
 export function VendorAnalytics() {
   const { user } = useAuth();
