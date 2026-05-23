@@ -84,7 +84,7 @@ function VendorOnboardingPage() {
         business_registration_doc: businessRegPath,
         id_document: idDocPath,
         tax_certificate: taxCertPath,
-      });
+      } as any);
 
       if (error) throw error;
 

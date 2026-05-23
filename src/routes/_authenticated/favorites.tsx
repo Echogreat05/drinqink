@@ -50,7 +50,7 @@ function FavoritesPage() {
                     <Card key={fav.id}>
                       <CardHeader>
                         <CardTitle className="text-lg">
-                          {fav.vendors?.name}
+                          {fav.vendors?.business_name}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>

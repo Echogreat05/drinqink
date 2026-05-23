@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 export async function generateSitemap() {
   const baseUrl = "https://sipcellar.com";
 
-  const staticPages = [
+  const staticPages: Array<{ url: string; changefreq: string; priority: number; lastmod?: string | null }> = [
     { url: "", changefreq: "daily", priority: 1.0 },
     { url: "/browse", changefreq: "daily", priority: 0.9 },
     { url: "/cellar", changefreq: "weekly", priority: 0.8 },
@@ -14,7 +14,7 @@ export async function generateSitemap() {
   // Fetch dynamic content
   const [products, vendors, blogPosts] = await Promise.all([
     supabase.from("products").select("slug, updated_at").eq("is_active", true),
-    supabase.from("vendors").select("slug, updated_at").eq("is_active", true),
+    supabase.from("vendors").select("slug, updated_at").eq("status", "approved"),
     supabase.from("blog_posts").select("slug, updated_at").eq("status", "published"),
   ]);
 
