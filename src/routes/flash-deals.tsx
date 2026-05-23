@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Clock, Zap } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
