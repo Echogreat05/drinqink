@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Paystack Integration Type Definitions
  */

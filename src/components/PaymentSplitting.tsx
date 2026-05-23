@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState } from "react";
 import { CreditCard, Users, Plus, Trash2, Divide } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

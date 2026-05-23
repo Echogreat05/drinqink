@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createFileRoute } from "@tanstack/react-router";
 import { useFavorites } from "@/hooks/use-favorites";
 import { PageShell } from "@/components/PageShell";

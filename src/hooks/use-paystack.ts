@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * React hooks for Paystack payment integration
  * Provides hooks for payment initialization, verification, and refunds

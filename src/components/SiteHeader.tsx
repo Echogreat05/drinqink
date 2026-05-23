@@ -33,9 +33,7 @@ export function SiteHeader() {
     } = supabase.auth.onAuthStateChange((_e: string, session: unknown) => {
       setAuthed(!!session);
     });
-    supabase
-      .getSession()
-      .then(({ data }: { data: { session: unknown } }) => setAuthed(!!data.session));
+    supabase.auth.getSession().then(({ data }) => setAuthed(!!data.session));
     return () => subscription.unsubscribe();
   }, []);
 
