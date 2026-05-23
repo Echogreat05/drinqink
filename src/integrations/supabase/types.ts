@@ -62,6 +62,48 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_posts: {
+        Row: {
+          author_id: string | null
+          content: string | null
+          cover_image: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          published_at: string | null
+          slug: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          content?: string | null
+          cover_image?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          published_at?: string | null
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          content?: string | null
+          cover_image?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          published_at?: string | null
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           created_at: string
@@ -913,6 +955,38 @@ export type Database = {
           },
         ]
       }
+      loyalty_redemptions: {
+        Row: {
+          customer_id: string
+          id: string
+          points_cost: number
+          redeemed_at: string
+          reward_id: string
+        }
+        Insert: {
+          customer_id: string
+          id?: string
+          points_cost: number
+          redeemed_at?: string
+          reward_id: string
+        }
+        Update: {
+          customer_id?: string
+          id?: string
+          points_cost?: number
+          redeemed_at?: string
+          reward_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_redemptions_reward_id_fkey"
+            columns: ["reward_id"]
+            isOneToOne: false
+            referencedRelation: "loyalty_rewards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       loyalty_rewards: {
         Row: {
           active: boolean
@@ -922,8 +996,10 @@ export type Database = {
           discount_percent: number | null
           expires_at: string | null
           id: string
+          is_active: boolean | null
           max_uses: number | null
           name: string
+          points_cost: number | null
           points_required: number
           uses: number | null
         }
@@ -935,8 +1011,10 @@ export type Database = {
           discount_percent?: number | null
           expires_at?: string | null
           id?: string
+          is_active?: boolean | null
           max_uses?: number | null
           name: string
+          points_cost?: number | null
           points_required: number
           uses?: number | null
         }
@@ -948,8 +1026,10 @@ export type Database = {
           discount_percent?: number | null
           expires_at?: string | null
           id?: string
+          is_active?: boolean | null
           max_uses?: number | null
           name?: string
+          points_cost?: number | null
           points_required?: number
           uses?: number | null
         }
@@ -998,6 +1078,7 @@ export type Database = {
           id: string
           order_id: string | null
           points_amount: number
+          points_change: number | null
           source: string | null
           transaction_type: Database["public"]["Enums"]["loyalty_transaction_type"]
         }
@@ -1010,6 +1091,7 @@ export type Database = {
           id?: string
           order_id?: string | null
           points_amount: number
+          points_change?: number | null
           source?: string | null
           transaction_type: Database["public"]["Enums"]["loyalty_transaction_type"]
         }
@@ -1022,6 +1104,7 @@ export type Database = {
           id?: string
           order_id?: string | null
           points_amount?: number
+          points_change?: number | null
           source?: string | null
           transaction_type?: Database["public"]["Enums"]["loyalty_transaction_type"]
         }
@@ -1068,36 +1151,57 @@ export type Database = {
       notification_preferences: {
         Row: {
           created_at: string
+          email_orders: boolean
+          email_promotions: boolean
+          email_updates: boolean
           flash_deals: boolean
           id: string
           loyalty_rewards: boolean
           new_products: boolean
           order_updates: boolean
           promotional: boolean
+          push_orders: boolean
+          push_promotions: boolean
+          sms_orders: boolean
+          sms_promotions: boolean
           system_alerts: boolean
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          email_orders?: boolean
+          email_promotions?: boolean
+          email_updates?: boolean
           flash_deals?: boolean
           id?: string
           loyalty_rewards?: boolean
           new_products?: boolean
           order_updates?: boolean
           promotional?: boolean
+          push_orders?: boolean
+          push_promotions?: boolean
+          sms_orders?: boolean
+          sms_promotions?: boolean
           system_alerts?: boolean
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
+          email_orders?: boolean
+          email_promotions?: boolean
+          email_updates?: boolean
           flash_deals?: boolean
           id?: string
           loyalty_rewards?: boolean
           new_products?: boolean
           order_updates?: boolean
           promotional?: boolean
+          push_orders?: boolean
+          push_promotions?: boolean
+          sms_orders?: boolean
+          sms_promotions?: boolean
           system_alerts?: boolean
           updated_at?: string
           user_id?: string
@@ -1276,6 +1380,44 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_tracking: {
+        Row: {
+          courier_name: string | null
+          created_at: string
+          id: string
+          location: string | null
+          notes: string | null
+          order_id: string
+          status: string
+        }
+        Insert: {
+          courier_name?: string | null
+          created_at?: string
+          id?: string
+          location?: string | null
+          notes?: string | null
+          order_id: string
+          status: string
+        }
+        Update: {
+          courier_name?: string | null
+          created_at?: string
+          id?: string
+          location?: string | null
+          notes?: string | null
+          order_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_tracking_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
         ]
@@ -1589,6 +1731,8 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          loyalty_points: number | null
+          loyalty_tier: string | null
           phone: string | null
           referral_code: string | null
           updated_at: string
@@ -1598,6 +1742,8 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id: string
+          loyalty_points?: number | null
+          loyalty_tier?: string | null
           phone?: string | null
           referral_code?: string | null
           updated_at?: string
@@ -1607,6 +1753,8 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          loyalty_points?: number | null
+          loyalty_tier?: string | null
           phone?: string | null
           referral_code?: string | null
           updated_at?: string
@@ -2183,7 +2331,80 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      customers: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          display_name: string | null
+          id: string | null
+          loyalty_points: number | null
+          loyalty_tier: string | null
+          phone: string | null
+          referral_code: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string | null
+          loyalty_points?: number | null
+          loyalty_tier?: string | null
+          phone?: string | null
+          referral_code?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string | null
+          loyalty_points?: number | null
+          loyalty_tier?: string | null
+          phone?: string | null
+          referral_code?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      group_order_participants: {
+        Row: {
+          group_order_id: string | null
+          id: string | null
+          joined_at: string | null
+          member_amount: number | null
+          member_id: string | null
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          group_order_id?: string | null
+          id?: string | null
+          joined_at?: string | null
+          member_amount?: number | null
+          member_id?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          group_order_id?: string | null
+          id?: string | null
+          joined_at?: string | null
+          member_amount?: number | null
+          member_id?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_order_members_group_order_id_fkey"
+            columns: ["group_order_id"]
+            isOneToOne: false
+            referencedRelation: "group_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       has_role: {
