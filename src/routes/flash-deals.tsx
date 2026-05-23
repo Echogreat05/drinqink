@@ -52,7 +52,7 @@ function FlashDealsPage() {
         .eq("status", "active")
         .gte("starts_at", new Date().toISOString())
         .lte("ends_at", new Date().toISOString());
-      setDeals(data || []);
+      setDeals((data || []) as any);
       setLoading(false);
     })();
   }, []);
