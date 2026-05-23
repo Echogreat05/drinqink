@@ -2407,6 +2407,16 @@ export type Database = {
       }
     }
     Functions: {
+      apply_referral_code: { Args: { _code: string }; Returns: string }
+      get_my_vendor_private: {
+        Args: never
+        Returns: {
+          cac_number: string
+          commission_rate: number
+          id: string
+          paystack_subaccount_code: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -2414,6 +2424,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      redeem_loyalty_reward: { Args: { _reward_id: string }; Returns: string }
     }
     Enums: {
       app_role: "customer" | "vendor" | "admin"
