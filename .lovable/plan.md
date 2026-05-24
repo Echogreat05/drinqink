@@ -1,84 +1,81 @@
-# Why you can't see your local changes
+# Full Production Audit & Stabilization
 
-I checked your repo against the live database and the wiring:
+## What I already verified
 
-- **Big migration file is sitting unapplied.** `supabase/migrations/20260521_add_missing_features.sql` (649 lines) creates ~25 new tables — `group_orders`, `event_plans`, `loyalty_tiers/transactions/rewards`, `subscriptions`, `favorites`, `notification_preferences`, `dispute_comments`, `order_item_customizations`, `corporate_team_members`, `vendor_analytics`, etc. None of them exist in the live DB yet. Any component that queries them silently fails → you see nothing.
-- **Several new components are orphaned.** `GroupOrders`, `EventPlanner`, `TheCellar`, `BlogCMS`, `CorporateTeamManagement`, `DisputeComments`, `OrderCustomizationDialog`, `OrderTracking`, `PaymentSplitting`, `ProductReviews`, `RefundRequest`, `SearchFilters`, `NotificationPreferences`, `AddressValidation` exist on disk but nothing imports them. They literally can't render until wired into routes.
-- **Only 5 of the new components are imported anywhere**: `LoyaltyPoints` + `SubscriptionManager` (dashboard), `FavoriteButton` (flash-deals, product, vendor).
+- The current live sandbox preview at `id-preview--eaaa8b1c-...lovable.app/` **loads successfully** (HTTP 200, full DrinqInk landing page renders, no runtime errors in console).
+- The "refused to connect" URL you saw (`preview-982bef60--drinqink.lovable.app`) is a **per-commit historical snapshot** that goes cold after a while — it is not the live preview. The GitHub connection is unrelated.
+- The big features migration is already applied — `group_orders`, `event_plans`, `loyalty_*`, `favorites`, `notification_preferences`, `corporate_*`, `dispute_comments`, `order_item_customizations`, `order_tracking`, etc. all exist in the live DB with RLS.
+- I found one real silent breakage already: `src/start.ts` does not register `attachSupabaseAuth` as a `functionMiddleware`. Every `createServerFn` call protected by `requireSupabaseAuth` will 401 because no bearer token is attached. This is the kind of bug that makes "nothing happens" when you click things.
 
-So the fix is two parts: get the DB matching the code, then mount the components on real routes. Then the cinematic layer on top.
+## Goals
 
----
+1. Make the preview reachable from your side (explain + verify URLs).
+2. Wire auth correctly end-to-end so protected actions work.
+3. Audit and exercise every flow (public + authenticated) and fix what breaks.
+4. Tighten types / remove `@ts-nocheck` where it hides real bugs.
+5. Re-run security + linter and produce a clean production checklist.
 
-## Milestone A — Restore the foundation (so changes actually appear)
+## Phase 1 — Preview access + auth wiring (blocking)
 
-1. **Apply the missing-features migration** via `supabase--migration` (re-issue the 649-line file as one transaction). Includes: new enums, group orders, event planner tables, loyalty system + tiers seed, referral bonuses, subscriptions, vendor/product analytics, dispute comments, order customizations, notification channels/preferences/log, favorites, corporate team/approvals/budgets/activity tables, RLS on every new table, indexes, triggers.
-2. **Regenerate `src/integrations/supabase/types.ts`** so the new tables are typed (otherwise TS will reject every new query).
-3. **Smoke-test the live preview** route-by-route via the browser tool and read console + network for 4xx/5xx; fix any RLS or column mismatch found.
+1. Tell you the correct stable preview URL to bookmark:
+   - Live preview: `https://id-preview--eaaa8b1c-01bf-4798-bdad-b4f96c42a681.lovable.app`
+   - Stable dev: `https://project--eaaa8b1c-01bf-4798-bdad-b4f96c42a681-dev.lovable.app`
+   The `preview-<hash>--drinqink.lovable.app` URLs are per-version snapshots and are expected to go cold.
+2. Patch `src/start.ts` to register the existing `attachSupabaseAuth` middleware (append, do not replace `errorMiddleware`). Without this, every `requireSupabaseAuth` server function 401s.
+3. Add a root-level `onAuthStateChange` listener (one place only) that calls `router.invalidate()` + `queryClient.invalidateQueries()` so the UI updates immediately after sign-in/out. Currently sign-in works but stale data persists.
 
-## Milestone B — Wire the orphan components into real routes
+## Phase 2 — Route & flow audit (browser-driven)
 
-Mount each existing component where it belongs. No new components built here, just plumbing + small route shells:
+I will walk every route, watch console + network, and fix any 4xx/5xx, blank state, or broken interaction I find. Coverage:
 
-| Component | Destination |
-|---|---|
-| `GroupOrders` | new `/_authenticated/group-orders` route + entry on dashboard |
-| `EventPlanner` | new `/_authenticated/event-planner` route |
-| `SubscriptionManager` | already on dashboard — verify it works post-migration |
-| `LoyaltyPoints` | already on dashboard — verify tier data shows |
-| `NotificationPreferences` | new `/_authenticated/notifications` route |
-| `OrderTracking` | embed inside `_authenticated/orders.$id.tsx` |
-| `ProductReviews` | embed in `product.$id.tsx` |
-| `OrderCustomizationDialog` | trigger from product detail "Customize" CTA |
-| `RefundRequest` + `DisputeComments` | embed in order detail when status allows |
-| `PaymentSplitting` | option in checkout for group orders |
-| `SearchFilters` | embed in `/browse` and `/search` |
-| `AddressValidation` | embed in checkout + addresses form |
-| `CorporateTeamManagement` | new `/_authenticated/corporate` route |
-| `BlogCMS` | new `/_authenticated/admin/blog` route (admin-only) |
-| `TheCellar` | replace static `/cellar` content or embed below hero |
+Public:
+- `/`, `/browse`, `/categories`, `/categories/$slug`, `/cellar`, `/flash-deals`, `/search`, `/product/$id`, `/vendor/$slug`, `/blog`, `/about`, `/contact`, `/faq`, `/how-it-works`, `/how-it-works-vendors`, `/login`, `/signup`, `/forgot-password`, `/reset-password`.
 
-Add the new routes to the header/dashboard nav so users can reach them.
+Authenticated (`_authenticated/*`):
+- `/dashboard`, `/orders`, `/orders/$id` (incl. embedded `OrderTracking`, `RefundRequest`, `ProductReviews`), `/favorites`, `/addresses`, `/checkout`, `/group-orders`, `/events`, `/corporate`, `/admin`, `/admin/blog`, `/vendor-dashboard`, `/vendor-onboarding`.
 
-## Milestone C — Cinematic 3D drinks journey (your /skill-creation brief)
+For each: load the page logged in (you said you can log in and safe test writes are OK), capture errors, fix root cause (not a try/catch swallow), re-verify.
 
-Layer the immersive experience on top of the now-working app. Built incrementally so we don't regress functionality.
+## Phase 3 — Component wiring sanity check
 
-**Foundation:**
-- Install `framer-motion` (have), `gsap`, `@studio-freight/lenis`, `@react-three/fiber`, `@react-three/drei`, `three`, `@tsparticles/react`.
-- Global `LenisProvider` in `__root.tsx` for smooth scroll.
-- GSAP + ScrollTrigger registration helper.
+Confirm every component that was supposed to be wired in the last pass actually renders and queries successfully:
+- `GroupOrders`, `EventPlanner`, `CorporateTeamManagement`, `BlogCMS` (admin gated).
+- `OrderTracking`, `RefundRequest`, `ProductReviews` embedded on `/orders/$id` and `/product/$id`.
+- `LoyaltyPoints`, `SubscriptionManager`, `NotificationPreferences` on the dashboard/notifications surface.
+- `SearchFilters`, `AddressValidation`, `FavoriteButton`, `CartButton`, `OrderCustomizationDialog`, `PaymentSplitting`, `DisputeComments`.
 
-**Home page (`/`) cinematic rebuild:**
-- Hero: keep premium image/video bg, layered glass nav, ambient floating particles, parallax headline.
-- Section 2 onward: `<Canvas>` with a single hero **3D bottle** that travels with scroll. Use ScrollTrigger to swap GLB/material as user scrolls through categories: Wine → Champagne → Whiskey → Cola → Water → Energy → Juice → Cocktail.
-- Each section is its own "environment": background gradient, lighting rig, particle palette, label all animated. Liquid/dissolve transitions between bottles via shader (custom OGL/Three material with noise dissolve + chromatic blend).
-- Pinned scroll scenes for category storytelling; cursor-reactive bottle rotation.
-- Mobile: degrade to a smaller bottle + reduced particle count; preserve scroll storytelling.
+Mount anything still orphaned and add nav entries where users can't reach it.
 
-**Cross-site polish:**
-- Lenis smooth scroll site-wide.
-- Replace harsh page transitions with crossfade + slide (framer-motion `AnimatePresence` at route level).
-- Premium hover/tap micro-interactions on cards, buttons, nav.
-- Ambient floating motion on category cards, vendor cards, cellar hero.
-- Glassmorphism pass on header, drawers, dialogs.
+## Phase 4 — Type & error hygiene
 
-**Performance guardrails:**
-- Lazy-load `@react-three/fiber` scene with Suspense; only mount when in viewport.
-- `useReducedMotion` respected — fall back to static hero for users who opted out.
-- Compressed `.glb` bottles (Draco) ≤ 300KB each; share one geometry + swap materials/labels.
-- FPS budget: target 60 desktop / 30+ mobile; visible perf monitor in dev only.
+- Replace remaining `as any` casts and `@ts-nocheck` headers added during the last fix-up with real typed queries now that the DB types match the schema.
+- Confirm `src/routes/__root.tsx` still has `<Outlet />` and a real `errorComponent` (it does — keep it).
+- Spot-check that no client file imports `@/integrations/supabase/client.server` (service role must not leak to the browser).
+- Verify Paystack helpers don't read `process.env` at module scope.
 
-## Risks / what I'll need from you
+## Phase 5 — Security, linter, performance
 
-- The migration is large. If anything in it conflicts with manual DB edits you made outside of Lovable, I'll need to reconcile — I'll surface conflicts before forcing through.
-- 3D bottle GLB assets: I can either generate stylized stand-ins, or you upload the real bottle models. Stand-ins keep us moving; real assets land at the polish pass.
-- Some flows (Paystack split, Resend emails) still need `PAYSTACK_SECRET_KEY` / `RESEND_API_KEY` to truly work end-to-end. I'll mock-pass where keys are missing and call them out.
+- Re-run security scan + DB linter. Fix anything new; document anything intentionally ignored in the security memory.
+- Confirm RLS on every table actually used by the UI.
+- Confirm `loyalty_redemptions` / `referrals` are only written via the `redeem_loyalty_reward` / `apply_referral_code` SECURITY DEFINER functions from the UI.
+- Light perf pass: lazy-load heavy admin components, ensure hero/cellar images use width/height + lazy loading (already mostly done).
 
-## Order of work when you approve
+## Phase 6 — Verification & handoff
 
-1. Migration + types regen (Milestone A).
-2. Browser-test every flow, fix what breaks.
-3. Wire orphan components (Milestone B), test again.
-4. Install 3D stack + Lenis, ship cinematic home page (Milestone C – pass 1).
-5. Cross-site motion polish (Milestone C – pass 2).
+- Final pass on `/` and the top 6 routes with browser + network capture.
+- Produce a short checklist of what's production-ready and what still needs a human decision (e.g. enabling Leaked Password Protection in the Supabase dashboard; setting `PAYSTACK_SECRET_KEY` / email keys if you want live transactional emails).
+
+## Out of scope for this loop
+
+The cinematic 3D drinks journey (Lenis + R3F + GSAP) is a separate milestone — I will not touch it here so this audit lands cleanly. Once you confirm everything in Phases 1–6 is green, I'll start it as its own plan.
+
+## What I need from you
+
+- Stay signed in in the preview so I can hit authenticated routes.
+- Confirm safe test orders/refunds are OK in the live DB (you already said yes).
+- If you want me to also seed any sample data (e.g. a few products / a vendor) for the audit, say so; otherwise I'll only touch existing records.
+
+## Risks
+
+- Some flows (Paystack split payments, transactional emails) can't be fully end-to-end verified without live API keys. I'll mark those as "wired but pending keys" rather than claim they work.
+- If `vite.config.ts`'s SSR error wrapper isn't loading correctly on your network, the "refused to connect" you saw could also reflect that — I'll watch the worker logs while testing and patch if I see h3-swallowed 500s.
