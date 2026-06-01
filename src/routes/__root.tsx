@@ -127,7 +127,10 @@ function AuthSync() {
   const router = useRouter();
   const queryClient = useQueryClient();
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      // INITIAL_SESSION fires on mount with the cached session; invalidating
+      // here causes a blank flash on first paint, so we ignore it.
+      if (event === "INITIAL_SESSION") return;
       router.invalidate();
       queryClient.invalidateQueries();
     });
