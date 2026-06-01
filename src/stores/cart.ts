@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage, type StateStorage } from "zustand/middleware";
 
 export type CartItem = {
   product_id: string;
@@ -23,6 +23,20 @@ type CartState = {
   count: () => number;
   itemsByVendor: () => Record<string, CartItem[]>;
 };
+
+// SSR-safe storage shim: during server render `localStorage` doesn't exist
+// and any access throws, blanking every route that imports the cart.
+const noopStorage: StateStorage = {
+  getItem: () => null,
+  setItem: () => {},
+  removeItem: () => {},
+};
+
+const safeStorage = createJSONStorage(() =>
+  typeof window !== "undefined" && typeof window.localStorage !== "undefined"
+    ? window.localStorage
+    : noopStorage,
+);
 
 export const useCart = create<CartState>()(
   persist(
@@ -59,6 +73,23 @@ export const useCart = create<CartState>()(
         return groups;
       },
     }),
-    { name: "sipcellar-cart" },
+    {
+      name: "sipcellar-cart",
+      storage: safeStorage,
+      skipHydration: true,
+      partialize: (s) => ({ items: s.items }),
+    },
   ),
 );
+
+// Hydrate persisted state once the browser is ready, after SSR is done.
+if (typeof window !== "undefined") {
+  // microtask so it runs after React's initial render
+  void Promise.resolve().then(() => {
+    try {
+      void useCart.persist.rehydrate();
+    } catch {
+      // ignore — storage might be unavailable (private mode, quota)
+    }
+  });
+}
