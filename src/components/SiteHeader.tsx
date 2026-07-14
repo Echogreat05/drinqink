@@ -38,15 +38,12 @@ export function SiteHeader() {
   }, []);
 
   return (
-    <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+    <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
         scrolled
-          ? "bg-onyx/90 backdrop-blur-xl border-b border-border/50 shadow-lg"
-          : "bg-transparent",
+          ? "bg-onyx/92 backdrop-blur-xl border-b border-border/60 shadow-lg"
+          : "bg-onyx/45 backdrop-blur-md border-b border-border/20",
       )}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-10">
@@ -65,13 +62,8 @@ export function SiteHeader() {
           </Link>
 
           <nav className="hidden lg:flex items-center gap-6 sm:gap-8">
-            {NAV.map((item, i) => (
-              <motion.div
-                key={item.to}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: i * 0.05 }}
-              >
+            {NAV.map((item) => (
+              <div key={item.to}>
                 <Link
                   to={item.to}
                   className="text-sm text-muted-foreground hover:text-primary transition-colors relative group"
@@ -80,7 +72,7 @@ export function SiteHeader() {
                   {item.label}
                   <motion.span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300" />
                 </Link>
-              </motion.div>
+              </div>
             ))}
           </nav>
 
@@ -192,6 +184,6 @@ export function SiteHeader() {
           )}
         </AnimatePresence>
       </div>
-    </motion.header>
+    </header>
   );
 }
