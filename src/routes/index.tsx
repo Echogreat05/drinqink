@@ -76,82 +76,62 @@ const TESTIMONIALS = [
 
 function Landing() {
   const { scrollY } = useScroll();
-  const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
-  const heroY = useTransform(scrollY, [0, 500], [0, 150]);
+  const heroY = useTransform(scrollY, [0, 600], [0, 80]);
 
   return (
     <div className="min-h-screen font-sans overflow-x-hidden">
       <SiteHeader />
 
       {/* HERO */}
-      <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-        <motion.div style={{ opacity: heroOpacity, y: heroY }} className="absolute inset-0">
+      <section className="relative min-h-[92vh] flex items-end pt-24 overflow-hidden border-b border-border/50">
+        <motion.div style={{ y: heroY }} className="absolute inset-0">
           <img
             src={heroImg}
             alt="Premium drinks selection on dark marble"
-            className="h-full w-full object-cover scale-105"
+            className="h-full w-full object-cover scale-105 opacity-75"
             width={1600}
             height={1200}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-onyx/60 to-onyx/90" />
-          <div className="absolute inset-0 bg-[image:var(--gradient-radial-gold)] opacity-30" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--onyx)_0%,oklch(0.09_0.004_60/0.88)_34%,oklch(0.09_0.004_60/0.44)_70%,oklch(0.09_0.004_60/0.8)_100%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,oklch(0.09_0.004_60/0.35)_0%,oklch(0.09_0.004_60/0.12)_42%,var(--onyx)_100%)]" />
         </motion.div>
 
-        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-10 py-20">
+        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-10 pb-10 sm:pb-14 lg:pb-18">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="max-w-4xl mx-auto space-y-8"
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="max-w-5xl space-y-7"
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass-card backdrop-blur-xl"
-            >
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-              >
-                <Sparkles className="h-4 w-4 text-primary" />
-              </motion.div>
+            <div className="inline-flex items-center gap-2 border-l-2 border-primary pl-4">
+              <Sparkles className="h-4 w-4 text-primary" />
               <span className="text-xs tracking-[0.2em] uppercase text-primary font-semibold">
-                Nigeria's Universal Drinks Platform
+                Nigeria's universal drinks platform
               </span>
-            </motion.div>
+            </div>
 
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.8 }}
-              className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[1.05] font-light tracking-tight"
+              transition={{ delay: 0.08, duration: 0.45 }}
+              className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[0.96] font-semibold tracking-tight max-w-4xl"
             >
-              Every drink,
-              <br />
-              <motion.span
-                className="text-gradient-gold italic inline-block"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5, duration: 0.8 }}
-              >
-                delivered cold & clear.
-              </motion.span>
+              Every drink delivered cold, clear, and on command.
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
-              className="text-lg sm:text-xl lg:text-2xl text-muted-foreground max-w-2xl leading-relaxed font-light"
+              transition={{ delay: 0.16, duration: 0.45 }}
+              className="text-base sm:text-lg lg:text-xl text-cream/82 max-w-2xl leading-relaxed font-light"
             >
-              From everyday beer crates and chilled office sodas, to ready-to-pour cocktail packs, hydration water bulks, and rare vintage collector malts — Nigeria's vetted drink suppliers, in one unified marketplace.
+              Shop beer crates, office sodas, water bulks, cocktail packs, premium spirits, and rare cellar bottles from vetted Nigerian drink suppliers in one marketplace.
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7, duration: 0.6 }}
+              transition={{ delay: 0.22, duration: 0.4 }}
               className="flex flex-col sm:flex-row gap-4 pt-6"
             >
               <Button asChild variant="hero" size="xl" className="group relative overflow-hidden">
@@ -177,8 +157,8 @@ function Landing() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.8, duration: 0.8 }}
-              className="grid grid-cols-3 gap-6 sm:gap-12 pt-10"
+              transition={{ delay: 0.28, duration: 0.45 }}
+              className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 pt-6 max-w-3xl"
             >
               <PremiumStat n="500+" label="Vetted vendors" icon={Shield} />
               <PremiumStat n="36" label="States covered" icon={Award} />
@@ -186,18 +166,6 @@ function Landing() {
             </motion.div>
           </motion.div>
         </div>
-
-        {/* Floating elements */}
-        <motion.div
-          animate={{ y: [0, -20, 0] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/4 right-10 w-20 h-20 rounded-full bg-primary/20 blur-3xl"
-        />
-        <motion.div
-          animate={{ y: [0, 20, 0] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute bottom-1/4 left-10 w-32 h-32 rounded-full bg-burgundy/20 blur-3xl"
-        />
       </section>
 
       {/* CATEGORIES */}
@@ -627,14 +595,15 @@ function Landing() {
 
 function PremiumStat({ n, label, icon: Icon }: { n: string; label: string; icon: typeof Shield }) {
   return (
-    <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }} className="text-center">
-      <div className="relative inline-block mb-2">
-        <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
-        <Icon className="h-6 w-6 text-primary relative z-10 mx-auto" />
+    <div className="flex items-center gap-3 border border-primary/20 bg-onyx/55 backdrop-blur-md px-4 py-3">
+      <div className="flex h-10 w-10 items-center justify-center border border-primary/25 bg-primary/10">
+        <Icon className="h-5 w-5 text-primary" />
       </div>
-      <div className="font-display text-2xl sm:text-3xl text-gradient-gold font-semibold">{n}</div>
-      <div className="text-xs tracking-[0.15em] uppercase text-muted-foreground mt-1">{label}</div>
-    </motion.div>
+      <div>
+        <div className="font-display text-xl sm:text-2xl text-gradient-gold font-semibold leading-none">{n}</div>
+        <div className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground mt-1">{label}</div>
+      </div>
+    </div>
   );
 }
 

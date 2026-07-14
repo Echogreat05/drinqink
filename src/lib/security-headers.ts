@@ -8,20 +8,18 @@ export const securityHeaders = {
   "Content-Security-Policy": [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.paystack.co",
-    "style-src 'self' 'unsafe-inline'",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: https: blob:",
-    "font-src 'self' data:",
+    "font-src 'self' data: https://fonts.gstatic.com",
     "connect-src 'self' https://*.supabase.co https://api.paystack.co wss://*.supabase.co",
     "frame-src 'self' https://js.paystack.co",
     "base-uri 'self'",
     "form-action 'self'",
-    "frame-ancestors 'none'",
+    "frame-ancestors 'self' https://*.lovable.app https://*.lovableproject.com",
     "upgrade-insecure-requests",
   ].join("; "),
 
   // Prevent clickjacking attacks
-  "X-Frame-Options": "DENY",
-
   // Prevent MIME type sniffing
   "X-Content-Type-Options": "nosniff",
 

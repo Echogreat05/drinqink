@@ -12,4 +12,7 @@ export default defineConfig({
   tanstackStart: {
     server: { entry: "server" },
   },
+  // Lovable builds force their managed Cloudflare-compatible output. Outside
+  // Lovable, Nitro can auto-detect Vercel; Vercel can also pin NITRO_PRESET=vercel.
+  nitro: true,
 });
